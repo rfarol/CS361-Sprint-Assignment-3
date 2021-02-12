@@ -34,7 +34,3 @@ if __name__ == '__main__':
             csv_write = csv.writer(csvfile)
             csv_write.writerow(headers) # output header
             csv_write.writerows(final) # output row
-
-
-
-
