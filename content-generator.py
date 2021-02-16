@@ -1,36 +1,108 @@
-import wikipedia
+import wikipediaapi
+from bs4 import BeautifulSoup
 import csv
+import tkinter as tk
+from tkinter.filedialog import askopenfile
 
+
+root = tk.Tk()
 def search_wiki(primary, secondary):
     """search_wiki function takes a primary and secondary argument and uses the primary argument to search a Wikipedia
-     page with the the primary argument as the title. It then takes the secondary argument, and searches a paragraph
-     containing both primary and secondary arguments and outputs it. Uses the Wikipedia API to gather the web page"""
-    page = wikipedia.page(primary) # finds the primary web page
-    page = page.content # stores the entire webpage
-    temp = page.split("==") # separates each section of the page to make search easier
-    for section in temp: # iterate through each section
-        if primary and secondary in section: # find both arguments
-            return section.strip() # return paragraph
+       page with the the primary argument as the title. It then takes the secondary argument, and searches a paragraph
+       containing both primary and secondary arguments and outputs it. Uses the Wikipedia API to gather the web page html
+       page. After, Beautiful Soup is used to parse through the html to separate the paragraphs. Then, the primary
+       and secondary searches are implemented. Paragraph is outputted into a text box. Contains inner function:
+       def OutputCSV()"""
+    find_html = wikipediaapi.Wikipedia(
+            language="en",
+            extract_format=wikipediaapi.ExtractFormat.HTML
+    )
+    page_html = find_html.page(primary)
+    raw = page_html.text
+    soup = BeautifulSoup(raw, 'html.parser')
+    paragraph_list = []
+    for paragraph in soup.find_all('p'):
+        paragraph_list.append(paragraph)
+    if len(paragraph_list) == 0:
+        result = "Page not found. Please search for another Primary word"
+        text_box = tk.Text(root, height=10, width=50, padx=15, pady=15)
+        text_box.insert(1.0, result)
+        text_box.grid(column=1, row=7)
+        # download file button
+        download_button = tk.Button(root, text="Download CSV", font="Arial", bg="orange", height=1, width=12)
+        download_button.grid(column=1, row=8)
+    else:
+        for search in paragraph_list:
+            if primary in search.text:
+                if secondary in search.text:
+                    result = search.text
+                elif secondary not in search.text:
+                    result = "Secondary word cannot be found. Please search for another Secondary word OR make a brand new search"
+                text_box = tk.Text(root, height=10, width=50, padx=15, pady=15)
+                text_box.insert(1.0, result)
+                text_box.grid(column=1, row=7)
+                # download file button
+                download_button = tk.Button(root, text="Download CSV", command=lambda:outputCSV(), font="Arial", bg="orange", height=1, width=12)
+                download_button.grid(column=1, row=8)
+                def outputCSV():
+                    """This function outputs the result into a csv file if the download button is pressed"""
+                    headers = []
+                    headers.append("input_keywords")
+                    headers.append("output_content")
+                    row = []
+                    row.append(primary + ";" + secondary)
+                    row.append(result)
+                    outfile = "output.csv"
+                    with open(outfile, "w") as csvfile:  # output a csv file containing new output
+                        csv_write = csv.writer(csvfile)
+                        csv_write.writerow(headers)  # output header
+                        csv_write.writerow(row)  # output row
 
 
-if __name__ == '__main__':
-    file = "input.csv" # read csv file
-    headers = [] # empty list for headers
-    final = [] # final output for rows
-    with open(file, "r", newline= "") as csvfile:
-        csv_read = csv.reader(csvfile) # read csv file
-        headers = next(csv_read) # input headers to the empty list
+def getCSV():
+    """getCSV function reads a CSV file that is uploaded from the user and calls search_wiki function once the primary
+    and secondary words are found"""
+    file = askopenfile(parent=root, mode="r", title="Choose a file", filetype=[("Csv file", "*.csv")])
+    if file is not None:
+        headers = []  # empty list for headers
+        final = []  # final output for rows
+        csv_read = csv.reader(file)  # read csv file
+        headers = next(csv_read)  # input headers to the empty list
         headers.append("output_content")
-        for row in csv_read: # iterate through each list
-            for words in row: # iterate through each element of the list
-                separate = words.split(";") # split the two words
-                result = search_wiki(separate[0], separate[1]) # perform search on 1st and 2nd word of each list
-                output = list(result.split(" ")) # combine results and turn output into a list
-                output = [" ".join(output)] # format list
-                combine = row + output # add the output to each row
-                final.append(combine) # append each row to final output list
-        outfile = "output.csv"
-        with open(outfile, "w") as csvfile: # output a csv file containing new output
-            csv_write = csv.writer(csvfile)
-            csv_write.writerow(headers) # output header
-            csv_write.writerows(final) # output row
+        for row in csv_read:  # iterate through each list
+            for words in row:  # iterate through each element of the list
+                separate = words.split(";")  # split the two words
+                result = search_wiki(separate[0], separate[1])  # perform search on 1st and 2nd word of each list
+
+canvas = tk.Canvas(root, width=600, height=300)
+canvas.grid(columnspan=3, rowspan=8)
+
+# instructions 1
+instructions_1 = tk.Label(root, text="Look Me Up!", font="Arial")
+instructions_1.grid(column=1, row=0)
+
+# instructions 2
+instructions_2 = tk.Label(root, text="Please enter a primary and secondary search word below!", font="Arial")
+instructions_2.grid(column=1, row=1)
+
+# primary entry
+p_entry = tk.Entry(root, font=40)
+p_entry.grid(column=1, row=2)
+
+# secondary entry
+s_entry = tk.Entry(root, font=40)
+s_entry.grid(column=1, row=3)
+
+# generate button
+generate_button = tk.Button(root, text="Generate Search", font=50, bg="orange", command=lambda: search_wiki(str(p_entry.get()), str(s_entry.get())))
+generate_button.grid(column=1, row=4)
+
+#instructions 3
+instructions_3 = tk.Label(root, text="OR you can input your own CSV file!", font="Arial")
+instructions_3.grid(column=1, row=5)
+
+# search file button
+select_button = tk.Button(root, text="Search File", command=lambda:getCSV(), font="Arial", bg="orange", height=1, width=10)
+select_button.grid(column=1, row=6)
+
+root.mainloop()
