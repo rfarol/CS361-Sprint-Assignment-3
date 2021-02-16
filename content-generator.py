@@ -20,7 +20,7 @@ def search_wiki(primary, secondary):
     page_html = find_html.page(primary) # find HTML page with the primary word
     raw = page_html.text # store raw HTML
     soup = BeautifulSoup(raw, 'html.parser') # parse through HTML with Beautiful Soup
-    paragraph_list = []
+    paragraph_list = [] # intialize empty list
     for paragraph in soup.find_all('p'): # separate paragrpahs and add to list
         paragraph_list.append(paragraph)
     if len(paragraph_list) == 0: # if no match was found, return output
