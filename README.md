@@ -1,6 +1,6 @@
 # CS361-Sprint-Assignment-3
 
-For my Spring Assignment 3, I have created a Content Generator GUI using Tkinter. I have used the following packages and modules:
+For my Spring Assignment 3, I have created a Content Generator GUI using Tkinter. I used the following packages and modules:
 
 Tkinter
 
