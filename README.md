@@ -15,3 +15,5 @@ Since it was my first time using Tkinter, I watched a YouTube video as an exampl
 https://tkdocs.com/tutorial/widgets.html
 
 https://www.youtube.com/watch?v=itRLRfuL_PQ
+
+For the output.csv, it should output to the directory after you close the Tkinter app 
