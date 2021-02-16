@@ -17,13 +17,13 @@ def search_wiki(primary, secondary):
             language="en",
             extract_format=wikipediaapi.ExtractFormat.HTML
     )
-    page_html = find_html.page(primary)
-    raw = page_html.text
-    soup = BeautifulSoup(raw, 'html.parser')
+    page_html = find_html.page(primary) # find HTML page with the primary word
+    raw = page_html.text # store raw HTML
+    soup = BeautifulSoup(raw, 'html.parser') # parse through HTML with Beautiful Soup
     paragraph_list = []
-    for paragraph in soup.find_all('p'):
+    for paragraph in soup.find_all('p'): # separate paragrpahs and add to list
         paragraph_list.append(paragraph)
-    if len(paragraph_list) == 0:
+    if len(paragraph_list) == 0: # if no match was found, return output
         result = "Page not found. Please search for another Primary word"
         text_box = tk.Text(root, height=10, width=50, padx=15, pady=15)
         text_box.insert(1.0, result)
@@ -32,11 +32,11 @@ def search_wiki(primary, secondary):
         download_button = tk.Button(root, text="Download CSV", font="Arial", bg="orange", height=1, width=12)
         download_button.grid(column=1, row=8)
     else:
-        for search in paragraph_list:
+        for search in paragraph_list: # search for paragraph with primary and secondary word
             if primary in search.text:
                 if secondary in search.text:
-                    result = search.text
-                elif secondary not in search.text:
+                    result = search.text # if both found, return output
+                elif secondary not in search.text: # if secondary word is found, return output
                     result = "Secondary word cannot be found. Please search for another Secondary word OR make a brand new search"
                 text_box = tk.Text(root, height=10, width=50, padx=15, pady=15)
                 text_box.insert(1.0, result)
