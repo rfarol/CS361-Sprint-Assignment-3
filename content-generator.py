@@ -32,11 +32,12 @@ def search_wiki(primary, secondary):
         download_button = tk.Button(root, text="Download CSV", font="Arial", bg="orange", height=1, width=12)
         download_button.grid(column=1, row=8)
     else:
+        prim_s = primary.lower()
+        print(prim_s)
         for search in paragraph_list: # search for paragraph with primary and secondary word
-            if primary in search.text:
-                if secondary in search.text:
-                    result = search.text # if both found, return output
-                elif secondary not in search.text: # if secondary word is found, return output
+            if prim_s and secondary in search.text:
+                result = search.text # if both found, return output
+                if result == prim_s:
                     result = "Secondary word cannot be found. Please search for another Secondary word OR make a brand new search"
                 text_box = tk.Text(root, height=10, width=50, padx=15, pady=15)
                 text_box.insert(1.0, result)
