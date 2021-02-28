@@ -16,4 +16,4 @@ https://tkdocs.com/tutorial/widgets.html
 
 https://www.youtube.com/watch?v=itRLRfuL_PQ
 
-For the output.csv, it should output to the directory after you close the Tkinter app 
+For the input csv file, it needs to contain a header and columns containing two search words. If using Excel, keep them within the same cell and they must be separated by a semicolon (;). An example CSV file can be found within the repo called input.csv. 
