@@ -141,7 +141,7 @@ instructions_2 = tk.Label(root, text="The CSV file must contain a header and col
 instructions_2.grid(column=1, row=6)
 
 # instructions 5
-instructions_2 = tk.Label(root, text="Please separate both search words with a ';'", font="Arial")
+instructions_2 = tk.Label(root, text="Please separate both search words with a ;", font="Arial")
 instructions_2.grid(column=1, row=7)
 
 # search file button
